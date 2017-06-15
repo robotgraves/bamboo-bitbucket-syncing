@@ -230,7 +230,14 @@ parsed_dictionary = parse_string_dictionary(response.text)
 
 for name, value in parsed_dictionary.iteritems():
     if name == "id":
+        print "server_id = " + str(value)
         server_id = value
+    else:
+        print parsed_dictionary
+        print response.text
+        print response.status_code
+        print "No server ID provided"
+        raise Exception
 
 
 url = "http://localhost:8085/rest/api/latest/server?_=" + str(int(round(time.time() * 1000)))
@@ -249,3 +256,28 @@ if not parsed.results:
     print "Results unexpected"
     raise Exception
 
+url = 'http://localhost:8085/rest/applinks/3.0/applicationlink'
+
+form = {
+    'id': server_id,
+    'name': 'Bitbucket',
+    'rpcUrl': 'http://10.0.2.15:7990',
+    'displayUrl': 'http://192.168.253.52:7990',
+    'typeId': "stash"
+}
+
+modified_headers = headers
+
+modified_headers['Accept'] = 'application/json, text/javascript, */*; q=0.01'
+modified_headers['content-Type'] = 'application/json; charset=utf-8'
+modified_headers['X-Requested-With'] = 'XMLHttpRequest'
+
+response = r.put(
+    url=url,
+    headers=modified_headers,
+    cookies=cookies,
+    data=json.dumps(form)
+)
+
+print response.text
+print response.status_code
