@@ -175,3 +175,7 @@ response = r.put(
 )
 
 print "link is complete on Bamboo"
+
+with open('bitbucket_server', 'r+') as f:
+    f.write(server_id)
+    f.truncate()
