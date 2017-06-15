@@ -22,6 +22,26 @@ class IllegalStateParser(HTMLParser):
             self.results = True
 
 
+def parse_string_dictionary(dictionary):
+    """
+    Hand over a string that should be a dictionary, and this should turn it into a dictionary
+    :param dictionary: 
+    :return: 
+    """
+    resulting_dictionary = {}
+    items = dictionary.strip('{').strip('}').split(',')
+    for item in items:
+        split_item = item.split(":")
+        name = split_item[0].strip('"')
+        try:
+            value = split_item[1].strip('"')
+        except IndexError:
+            value = ""
+        resulting_dictionary[name] = value
+
+    return resulting_dictionary
+
+
 bamboo_host = "http://10.0.2.15:8085"
 bitbucket_host = "http://10.0.2.15:7990"
 r = requests.session()
@@ -99,19 +119,7 @@ response = r.get(
 )
 
 
-def parse_string_dictionary(dictionary):
-    resulting_dictionary = {}
-    items = dictionary.strip('{').strip('}').split(',')
-    for item in items:
-        split_item = item.split(":")
-        name = split_item[0].strip('"')
-        try:
-            value = split_item[1].strip('"')
-        except IndexError:
-            value = ""
-        resulting_dictionary[name] = value
 
-    return resulting_dictionary
 
 results = parse_string_dictionary(response.text)
 
@@ -165,6 +173,79 @@ response = r.get(
     url=url
 )
 
-# print response.text
-print response.cookies
-print response.status_code
+cookies = {}
+
+cookies['JSESSIONID'] = response.cookies['JSESSIONID']
+cookies['atl.xsrf.token'] = response.cookies['atl.xsrf.token']
+
+url = 'http://localhost:8085/userlogin.action'
+
+form = {
+    'os_destination': '/start.action',
+    'os_username': 'bamboo',
+    'os_password': 'test',
+    'checkBoxFields': 'os_cookie',
+    'save': 'Log+in',
+    'atl_token': cookies['atl.xsrf.token']
+}
+
+r.post(
+    url=url,
+    headers=headers,
+    cookies=cookies,
+    data=form
+)
+
+url = 'http://localhost:8085/plugins/servlet/applinks/listApplicationLinks'
+
+response = r.get(
+    url=url,
+    headers=headers,
+    cookies=cookies
+)
+
+results = IllegalStateParser(data='Configure Application Links')
+results.feed(response.text)
+if not results.results:
+    print response.text
+    print response.status_code
+    print "not at Configure Application Links page"
+    raise Exception
+
+cookies['bamboo.dash.display.toggles'] = 'buildQueueActions-actions-queueControl'
+
+url = str(
+    "http://10.0.2.15:8085/rest/applinks/3.0/applicationlinkForm/manifest.json?url=" +
+    bitbucket_host +
+    "&_=" +
+    str(int(round(time.time() * 1000))))
+
+response = r.get(
+    url=url,
+    headers=headers,
+    cookies=cookies,
+)
+
+parsed_dictionary = parse_string_dictionary(response.text)
+
+for name, value in parsed_dictionary.iteritems():
+    if name == "id":
+        server_id = value
+
+
+url = "http://localhost:8085/rest/api/latest/server?_=" + str(int(round(time.time() * 1000)))
+
+response = r.get(
+    url=url,
+    headers=headers,
+    cookies=cookies
+)
+
+parsed = IllegalStateParser(data='RUNNING')
+parsed.feed(response.text)
+if not parsed.results:
+    print response.text
+    print response.status_code
+    print "Results unexpected"
+    raise Exception
+
