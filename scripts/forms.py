@@ -130,3 +130,41 @@ if x == 1:
     print "Atlassian+Bamboo was not linked"
     raise Exception
 
+for name, value in results.iteritems():
+    if name == "id":
+        server_id = value
+
+url = "http://localhost:7990/rest/applinks/3.0/applicationlink"
+
+form = {
+    'id': server_id,
+    'name': 'Atlassian+Bamboo',
+    'rpcUrl': 'http://10.0.2.15:8085',
+    'displayUrl': 'http://192.168.253.52:8085',
+    'typeId': 'bamboo'
+}
+
+modified_headers = headers
+
+modified_headers['Accept'] = 'application/json, text/javascript, */*; q=0.01'
+modified_headers['content-Type'] = 'application/json; charset=utf-8'
+modified_headers['X-Requested-With'] = 'XMLHttpRequest'
+
+
+response = r.put(
+    url=url,
+    headers=modified_headers,
+    data=json.dumps(form),
+)
+
+print "link is complete on Bitbucket"
+
+url = 'http://localhost:8085/userlogin!doDefault.action'
+
+response = r.get(
+    url=url
+)
+
+# print response.text
+print response.cookies
+print response.status_code
