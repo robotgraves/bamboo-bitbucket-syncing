@@ -47,7 +47,7 @@ bitbucket_host = "http://10.0.2.15:7990"
 r = requests.session()
 
 headers = {
-    'Host': 'localhost:7990',
+    'Host': "localhost:8085",
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     'Accept-Language': 'en-US,en;q=0.5',
@@ -82,12 +82,13 @@ form = {
     'atl_token': cookies['atl.xsrf.token']
 }
 
-r.post(
+response = r.post(
     url=url,
     headers=headers,
     cookies=cookies,
     data=form
 )
+
 
 url = 'http://localhost:8085/plugins/servlet/applinks/listApplicationLinks'
 
@@ -108,7 +109,7 @@ if not results.results:
 cookies['bamboo.dash.display.toggles'] = 'buildQueueActions-actions-queueControl'
 
 url = str(
-    "http://10.0.2.15:8085/rest/applinks/3.0/applicationlinkForm/manifest.json?url=" +
+    "http://localhost:8085/rest/applinks/3.0/applicationlinkForm/manifest.json?url=" +
     bitbucket_host +
     "&_=" +
     str(int(round(time.time() * 1000))))
@@ -156,8 +157,8 @@ url = 'http://localhost:8085/rest/applinks/3.0/applicationlink'
 form = {
     'id': server_id,
     'name': 'Bitbucket',
-    'rpcUrl': 'http://10.0.2.15:7990',
-    'displayUrl': 'http://192.168.253.52:7990',
+    'rpcUrl': bitbucket_host,
+    'displayUrl': bitbucket_host,
     'typeId': "stash"
 }
 
@@ -176,6 +177,6 @@ response = r.put(
 
 print "link is complete on Bamboo"
 
-with open('bitbucket_server', 'r+') as f:
+with open('bitbucket_server', 'w+') as f:
     f.write(server_id)
     f.truncate()
