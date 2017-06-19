@@ -106,4 +106,94 @@ cookies = {
     'atl.xsrf.token': xsrf_token
 }
 
-print response.text
+# print response.text
+bamboo_server = open('bamboo_server').read()
+
+url = "http://localhost:7990/rest/applinks/3.0/applinks/" + bamboo_server + "?data=configUrl&data=iconUri"
+
+form = {
+    'id': str(r),
+    'statusLoaded': True,
+    'status': {
+        'link': {
+            'id': str(r),
+            'name': "Atlassian+Bamboo",
+            'displayUrl': bamboo_host,
+            'rpcUrl': bamboo_host,
+            'type': 'bamboo'
+        },
+        'working': False,
+        'localAuthentication': {
+            'incoming': {
+                'enabled': False,
+                'twoLoEnabled': False,
+                'twoLoImpersonationEnabled': False
+            }
+        },
+        'remoteAuthentication': {
+            'incoming': {
+                'enabled': False,
+                'twoLoEnabled': False,
+                'twoLoImpersonationEnabled': False
+            }
+        },
+        'error': {
+            'category': "DISABLED",
+            'type': 'DISABLED'
+        }
+    },
+    'name': "Atlassian+Bamboo",
+    'displayUrl': bamboo_host,
+    'rpcUrl': bamboo_host,
+    'type': 'bamboo',
+    'system': False,
+    'primary': True,
+    'data': {
+        'configUrl': bamboo_host + '/plugins/servlet/applinks/listApplicationLinks',
+        'iconUri': bamboo_host + '/s/126369268/2d88633/1/5.2.6/_/download/resources/com.atlassian.applinks.applinks-plugin:applinks-images/images/config/logos/128x128/128bamboo.png'
+    }
+}
+
+modified_headers = headers
+
+modified_headers['Accept'] = 'application/json, text/javascript, */*; q=0.01'
+modified_headers['content-Type'] = 'application/json; charset=utf-8'
+modified_headers['X-Requested-With'] = 'XMLHttpRequest'
+
+r.put(
+    url=url,
+    headers=modified_headers,
+    cookies=cookies,
+    data=json.dumps(form)
+)
+
+url = 'http://localhost:7990/rest/applinks/3.0/status/' + bamboo_server + '/oauth'
+
+form = {
+    'incoming': {
+        'enabled': True,
+        'twoLoEnabled': True,
+        'twoLoImpersonationEnabled': False
+    },
+    'outgoing': {
+        'enabled': True,
+        'twoLoEnabled': True,
+        'twoLoImpersonationEnabled': False
+    }
+}
+
+response = r.put(
+    url=url,
+    headers=modified_headers,
+    cookies=cookies,
+    data=json.dumps(form)
+)
+
+if not int(response.status_code) == 204:
+    print response.text
+    print response.status_code
+    print "Unexpected server response, applications not linked"
+    raise Exception
+
+print "Initial Bamboo->Bitbucket Link Configured"
+
