@@ -63,7 +63,7 @@ url = str(
     'http://localhost:7990/plugins/servlet/applinks/listApplicationLinks'
 )
 
-r.get(
+response = r.get(
     url=url,
     headers=headers
 )
@@ -107,7 +107,7 @@ cookies = {
 }
 
 url = str(
-    "http://10.0.2.15:7990/rest/applinks/3.0/applicationlinkForm/manifest.json?url=" +
+    "http://localhost:7990/rest/applinks/3.0/applicationlinkForm/manifest.json?url=" +
     bamboo_host +
     "&_=" +
     str(int(round(time.time() * 1000))))
@@ -147,8 +147,8 @@ url = "http://localhost:7990/rest/applinks/3.0/applicationlink"
 form = {
     'id': server_id,
     'name': 'Atlassian+Bamboo',
-    'rpcUrl': 'http://10.0.2.15:8085',
-    'displayUrl': 'http://192.168.253.52:8085',
+    'rpcUrl': bamboo_host,
+    'displayUrl': bamboo_host,
     'typeId': 'bamboo'
 }
 
