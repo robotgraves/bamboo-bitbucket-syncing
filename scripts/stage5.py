@@ -159,49 +159,49 @@ response = r.post(
     data=form
 )
 
-# time.sleep(2)
-#
-# url = 'http://localhost:8085/plugins/servlet/applinks/auth/conf/oauth/outbound/apl-2lo/' + \
-#       bitbucket_server + \
-#       '?callback=http://10.0.2.15:7990/plugins/servlet/applinks/auth/conf/oauth/add-consumer-by-url/' + \
-#       bamboo_server + \
-#       '/INBOUND?oauth-incoming-enabled=true&uiposition=remote' \
-#       '&hostUrl=http%3A%2F%2Flocalhost%3A8085&' \
-#       '&outgoing2LOEnabled=true' \
-#       '&outgoing2LOiEnabled=false' \
-#       '&enable-outgoing-2lo=true' \
-#       '&enable-outgoing-2loi=false'
-#
-# response = r.get(
-#     url=url,
-#     headers=headers,
-#     cookies=cookies
-# )
-#
-# print response.status_code
-#
-# modified_headers = headers
-#
-# modified_headers['Host'] = '10.0.2.15:7990'
-#
-# url = 'http://10.0.2.15:7990/plugins/servlet/applinks/auth/conf/oauth/add-consumer-by-url/' + \
-#       bamboo_server + \
-#       '/INBOUND?oauth-incoming-enabled=true' \
-#       '&uiposition=remote' \
-#       '&hostUrl=http://localhost:8085' \
-#       '&outgoing2LOEnabled=true' \
-#       '&outgoing2LOiEnabled=false' \
-#       '&outgoing_2lo_success=true' \
-#       '&message=Outgoing+2-Legged+OAuth+authentication+has+been+enabled.Outgoing+2-Legged+OAuth+authentication+with+Impersonation+has+been+disabled.'
-#
-# response = r.get(
-#     url=url,
-#     headers=modified_headers,
-#     cookies=cookies
-# )
-#
-# print response.status_code
-#
-#
+time.sleep(2)
+
+url = 'http://localhost:8085/plugins/servlet/applinks/auth/conf/oauth/outbound/apl-2lo/' + \
+      bitbucket_server + \
+      '?callback=http://10.0.2.15:7990/plugins/servlet/applinks/auth/conf/oauth/add-consumer-by-url/' + \
+      bamboo_server + \
+      '/INBOUND?oauth-incoming-enabled=true&uiposition=remote' \
+      '&hostUrl=http%3A%2F%2Flocalhost%3A8085&' \
+      '&outgoing2LOEnabled=true' \
+      '&outgoing2LOiEnabled=false' \
+      '&enable-outgoing-2lo=true' \
+      '&enable-outgoing-2loi=false'
+
+response = r.get(
+    url=url,
+    headers=headers,
+    cookies=cookies
+)
+
+print response.status_code
+
+modified_headers = headers
+
+modified_headers['Host'] = '10.0.2.15:7990'
+
+url = 'http://10.0.2.15:7990/plugins/servlet/applinks/auth/conf/oauth/add-consumer-by-url/' + \
+      bamboo_server + \
+      '/INBOUND?oauth-incoming-enabled=true' \
+      '&uiposition=remote' \
+      '&hostUrl=http://localhost:8085' \
+      '&outgoing2LOEnabled=true' \
+      '&outgoing2LOiEnabled=false' \
+      '&outgoing_2lo_success=true' \
+      '&message=Outgoing+2-Legged+OAuth+authentication+has+been+enabled.Outgoing+2-Legged+OAuth+authentication+with+Impersonation+has+been+disabled.'
+
+response = r.get(
+    url=url,
+    headers=modified_headers,
+    cookies=cookies
+)
+
+print response.status_code
+
+
 
 print "Outgoing two-legged OAUTH turned on"
