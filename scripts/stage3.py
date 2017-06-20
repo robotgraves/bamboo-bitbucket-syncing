@@ -46,6 +46,8 @@ bamboo_host = "http://10.0.2.15:8085"
 bitbucket_host = "http://10.0.2.15:7990"
 r = requests.session()
 
+time.sleep(2)
+
 headers = {
     'Host': 'localhost:7990',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0',
